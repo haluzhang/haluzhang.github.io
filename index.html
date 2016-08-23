@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		#wrap{
+			width: 1000px;
+			height: 600px;
+			border: 1px solid black;
+			overflow: hidden;
+			margin: 0 auto;
+			position: relative;
+		}
+		#photo{
+			width: 10000px;
+			transition: all 1s;
+			position: absolute;
+			left: 0;
+		}
+		#photo img{
+			width: 1000px;
+			height: 600px;
+			float: left;
+		}
+		#pages_circle{
+			list-style: none;
+			position: absolute;
+			bottom: 10px;
+			left: 400px;
+		}
+		.pages{
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background: white;
+			display: inline-block;
+		}
+		#btn{
+			position: absolute;
+			top: 45%;
+			width: 100%;
+			display: none;
+		}
+		#btn a{
+			width: 28px;
+			height: 62px;
+			background: rgba(0,0,0,0.3);
+			float: left;
+			line-height: 62px;
+			text-decoration: none;
+			text-align: center;
+			color: white;
+		}
+		#btn #prev{
+			float: left;
+		}
+		#btn #next{
+			float: right;
+		}
+		.selected{
+			background: cyan;
+		}
+	</style>
+</head>
+<body>
+	<!-- 最外层的div -->
+	<div id="wrap">
+		<!-- 轮播的图片 -->
+		<div id="photo">
+			<img src="img/1.jpg" alt="">
+			<img src="img/2.jpg" alt="">
+			<img src="img/3.jpg" alt="">
+			<img src="img/4.jpg" alt="">
+			<img src="img/5.jpg" alt="">
+			<img src="img/6.jpg" alt="">
+		</div>
+		<!-- 图片下面的小圆点 -->
+		<ul id="pages_circle">
+			<li class="pages selected"></li>
+			<li class="pages"></li>
+			<li class="pages"></li>
+			<li class="pages"></li>
+			<li class="pages"></li>
+			<li class="pages"></li>
+		</ul>
+		<!-- 左右按钮 -->
+		<div id="btn">
+			<a href="#" id="prev">&lt;</a>
+			<a href="#" id="next">&gt;</a>
+		</div>
+	</div>
+	<script>
+		// 获取元素
+		var wrap = document.getElementById("wrap");
+		var photo = document.getElementById("photo");
+		var imgs = document.getElementsByTagName("img");
+		var btn = document.getElementById("btn");
+		var prev = document.getElementById("prev");
+		var next = document.getElementById("next");
+		var pages = document.getElementsByClassName('pages');
+		var index = 0;
+		var auto = null;
+
+		// 自动轮播
+		function autoplay(){
+			auto = setInterval(function(){
+				index++;
+				if (index > imgs.length - 1) {
+					index = 0;
+				}
+				photo.style.left = index * -(imgs[0].width) + "px";
+				change();
+			},3000);
+		}
+		autoplay();
+		// 把鼠标移入到图片上时
+		wrap.onmouseover = function(){
+			// 清除自动轮播
+			clearInterval(auto);
+			// 左右按钮出现
+			btn.style.display = "block";
+		}
+		// 把鼠标移出图片后
+		wrap.onmouseout = function(){
+			// 图片继续轮播
+			autoplay();
+			// 左右按钮消失
+			btn.style.display = "none";
+		}
+		// 左按钮的点击事件
+		prev.onclick = function(){
+			// 清除自动轮播
+			clearInterval(autoplay);
+			index--;
+			if (index < 0) {
+				index = 5;
+			}
+			photo.style.left = index * -imgs[0].width + "px";
+			change();
+		}
+		// 右按钮的点击事件
+		next.onclick = function(){
+			// 清除自动轮播
+			clearInterval(autoplay);
+			index++;
+			if (index > 5) {
+				index = 0;
+			}
+			photo.style.left = index * -imgs[0].width + "px";
+			change();
+		}
+		// 小圆点按钮的滚动方法
+		for(var i = 0;i < pages.length;i++){
+			pages[i].index = i;
+			pages[i].onmouseover = function(){
+				// 清除自动轮播
+				clearInterval(autoplay);
+				photo.style.left = this.index * -imgs[0].width + "px";
+				index = this.index;
+				change();
+			}
+		}
+		// 小圆点样式的改变
+		function change(){
+			for(var i = 0;i < pages.length;i++){
+				pages[0].style.background = "white";
+				pages[i].style.background = "";
+			}
+			pages[this.index].style.background = "cyan";
+		}
+
+	</script>
+</body>
+</html>
